@@ -1,0 +1,20 @@
+#header-container.header-container {
+    width: 100%;
+}
+
+#navigation-container.navigation-container {
+    right: auto;
+    width: 100px;
+    position: fixed;
+    overflow-y: auto;
+}
+
+#page-container.page-container {
+    display: flex;
+    flex: 1;
+    margin-left: 240px;
+}
+
+#header-space.space {
+    margin-top: 0px;
+}
