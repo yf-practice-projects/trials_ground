@@ -1,0 +1,638 @@
+# goの特別な関数
+func main()
+	メイン関数
+	必ず呼ばれる関数
+func init()
+	メイン関数より先に呼び出される
+
+
+# public and private
+goでは
+publicの変数関数を大文字 ex)func Public(){}
+privateの変数関数を小文字　ex)func private(){}
+で定義する
+
+
+# importについて
+通常以下でパッケージをインポートできる
+	import "パッケージ名"
+
+複数インポートする場合
+	import "パッケージ名1"
+	import "パッケージ名2"
+もしくは
+	import (
+		"パッケージ名1"
+		"パッケージ名2"
+	)
+
+
+# 変数宣言
+	var i int = 1
+	var t, f bool = true, false
+
+	文字列はアスキーコードと強く紐づいている
+
+	変数に何も入れないで宣言可能
+	その場合初期値が入る
+	var noitem string
+
+	まとめて宣言するには
+	var(
+		i int = 1
+		f64 float64 = 1.2
+	)
+
+	関数内のみ宣言可能な方法
+	func main() {
+		xi := 1
+		xf64 := 1.2
+		xt, xf := true, false 
+	}
+
+	不変な値の宣言
+	const Pi = 3.14
+	const(
+		Username = "test_user"
+		Pass = "test_pass"
+	)
+
+
+#型変換
+func main() {
+	// int → float64は変換可能
+	var x int =1
+	xx := float(x)
+
+	// float64 → intは変換可能
+	var y float64 = 1.2
+	yy := int(y)
+
+	// string → int は別方法
+	var s string = "1.4"
+	i, _ := strconv.Atoi(s)
+}
+
+
+# 配列
+	※配列はサイズを変更できない
+
+	var a [2]int
+	a[0] = 100
+	a[1] = 200
+
+	var b [2]int = [2]int {100,200}
+
+#スライス
+	n := []int{1,2,3,4,5,6}
+	n[2] → 3
+	
+	n[3] = 100
+	fmt.Println(n)
+		→[1,2,3,100,5,6]
+
+	初期化
+	n :=make([]int, 3, 5)
+	→メモリ上に確保する
+
+	var n []int
+	→宣言のみで確保はしていない
+
+	ex)
+		以下でroopさせた場合の出力結果について
+		for i := 0; i < 5; i++ {
+			c = append(c, i)
+			fmt.Println(c)
+		}
+
+		c = make([]int, 5)
+		[0 0 0 0 0 0]
+		[0 0 0 0 0 0 1]
+		[0 0 0 0 0 0 1 2]
+		[0 0 0 0 0 0 1 2 3]
+		[0 0 0 0 0 0 1 2 3 4]
+		[0 0 0 0 0 0 1 2 3 4]
+
+		c = make([]int, 0, 5)
+		[0]
+		[0 1]
+		[0 1 2]
+		[0 1 2 3]
+		[0 1 2 3 4]
+		[0 1 2 3 4]
+
+
+# map(辞書型)
+	m := map[string]int {"apple": 100, "banana": 200}
+	m2 := make(map[string]int)
+
+	追加する場合
+	m["orange"] = 300
+
+	存在しないキーを指定した場合
+	v, result := m["nothing"]
+	→0, false
+	 (返り値の指定は2つまで可能で、
+	 １つのみだとvalueのみが返る)
+
+	禁止
+	var m3 map[string]int
+	m3["new"] = 1000
+	→エラーになる(m3の中身は「nil」)
+
+# 関数
+	返り値あり
+	func add(x int, y int) int {
+		return x + y
+	}
+
+	引数の方指定は複数が同じなら省略可
+	func add(x, y int) int {
+		return x + y
+	}
+
+	返り値を複数持たせる場合
+	func add(x, y int) (int, int) {
+		return x + y, x - y
+	}
+
+	返り値の型指定では変数の宣言も可能
+	func add(x, y int) (result int) {
+		result = x + y
+		return result ← 書いても書かなくてもファンクション内のresultを返す
+	}
+
+	ファンクション内にファンクションを記述可能
+	func main(){
+		f := func(){
+			fmt.Println("test")
+		}
+		f()
+	}
+
+# クロージャー
+ファンクションの引数にファンクションを定義可能
+	func circleArea(pi float64) func(radius float64) float64{
+		return func(radius float64) float64{
+			return pi * radius * radius
+		}
+	}
+
+	func main(){
+		c1 := circleArea(3.14)
+		c1(2) → 12.56
+		c1(3) → 28.2599999999
+
+		c2 := circleArea(3)
+		c2(2) → 12
+		c2(3) → 27
+	}
+
+
+# 可変長引数
+	func foo(params ...int){}
+
+	func main(){
+		foo()
+		foo(10)
+		foo(10,20)
+	
+		//スライスを可変長引数に渡す場合
+		s := []int{1, 2, 3}
+		〇foo(s...)
+		✕foo(s)
+	}
+
+
+# if文
+	if 条件式{
+		命令文
+	} else if{
+		命令文
+	}else{
+		命令文
+	}
+
+	// 変数代入と同時にif文を記述することが可能
+	func sum(num int) int{
+		return num + num
+	}
+
+	func main() {
+		if result := sum(10); result == 20{
+			命令文
+		}
+	}
+
+
+# for文
+	for i := 0; i < 10; i++{
+		命令文
+	}
+
+	sum := 1
+	for sum < 10 {
+		sum += sum
+	}
+
+
+# range
+	l := []string{"python","go","java"}
+
+	for i := 0; i < len(l); i++{
+		i
+		l[i]
+	}
+	// range で１個ずつ取り出すことができる（上記と同じ処理）
+	for i, v := range l{
+		i, v
+	}
+
+
+# switch文
+	num := 1
+	switch num{
+	case 1 :
+		命令文
+	case 2 :
+		命令文
+	default :	//記述しなくても問題ない
+		命令文
+	}
+
+	// 変数を持ち続ける必要がないならばswitch文に１行で記述可能
+	func getNum() {
+		return 1
+	}
+	func main(){
+		switch num := getNum(); num {
+		case 1 :
+			命令文
+		case 2 :
+			命令文
+		default :	//記述しなくても問題ない
+			命令文
+		}
+	}
+	
+	// switch文に条件文を記述しなくても問題ない
+	t := time.Now()
+	switch {
+	case t.Hour() < 12 :
+		命令文
+	case t.Hour() < 15 :
+		命令文
+	default :	//記述しなくても問題ない
+		命令文	
+	}
+
+
+# defer 遅延実行
+関数の終わりに処理を実行させる記述
+用途はファイルのクローズ処理を最終的に行わせるような使い方ができる
+	func main(){
+		defer fmt.Println(1)
+		defer fmt.Println(2)
+		defer fmt.Println(3)
+	}
+	→　3,2,1の順で出力される
+	　 つまり最初に読み込まれたdeferが最後に実行される
+
+
+# log
+簡易的なlogの出力はgoで提供されている。
+複雑なものはサードパーティ製のものを使用するのもあり
+	log.Println("test")
+	→　2021/08/12 00:06:29 test
+	
+	// 強制的に処理を終了すさせる
+	// 下の例だとfmtは実行されない
+	log.Fatalf("test")
+	fmt.Println("test")
+	→　2021/08/12 00:07:29 test
+	
+	単純なlogの設定
+	func LoggingSettings(logFile string){
+		logfile, _ := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		multiLogFile := io.MultiWriter(os.Stdout, logfile)
+		log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
+		log.SetOutput(multiLogFile)
+	}
+
+	func main(){
+		LoggingSettings("test.log")
+	}
+
+
+# panic recover
+panic()は意図的にエクセプションを発生させ、強制終了させる
+recover()はpanicの内容をキャッチする。
+※基本panicは非推奨
+
+
+# new
+メモリ領域を確保する。
+newとmakeの違いは、
+newの場合ポインター情報を返すが、
+makeは返さない。
+
+# struct 構造体
+type Vertex struct {
+	x string
+	y int
+	z1, z2 int
+}
+
+# interface
+実装にメソッドの作成を矯正する
+	type Human interface{
+		Say()
+	}
+
+	type Person struct {
+		Name string
+	}
+
+	func (p Person) Say(){
+		fmt.Println(p.Name)
+	}
+
+	func main(){
+		var mike Human = Person{'Mike'}
+		mike.Say()
+	}
+
+
+# タイプアサーションとswitch type文
+
+	func do(i interface{}){
+		// 引数にインターフェイスで指定すると
+		// 型を指定せず、何でも入れることができる
+		ii := i.(int)
+		ss := i.(string)
+	
+		// i.(type)はswitch文でしか使用できない
+		// 引数として受け取った値の型に応じて処理を分岐するときに使用する
+		switch v := i.(type) {
+		case int:
+			処理文
+		case string:
+			処理分
+		
+		}
+	
+	}
+
+# カスタムエラー
+
+	type UserNotFound struct {
+		Username string
+	}
+
+	func (e *UserNotFound) Error() string {
+		return fmt.Sprintf("User not found: %v", e.Username)
+	}
+
+	func myFunc() error {
+		ok := false; if ok {
+			return nil
+		}
+		return &UserNotFound{Username: "Mike"}
+	}
+
+	func main(){
+		if err :=myFunc(); err !=nil{
+			fmt.Println(err)
+		}
+	}
+
+
+# gorutine とsync.WaitGroup
+
+	func gorutine(s string){
+		// 並列処理は間隔を開けないとスレッドの生成が間に合わない
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println(s)
+	}
+
+	func normal(s string){
+		// 並列処理は間隔を開けないとスレッドの生成が間に合わない
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println(s)
+	}
+
+	func main(){
+		// 並列処理を行うには関数の前にgoを記述
+		go gorutine("world")
+		normal("hello")
+	}
+
+
+	// WaitGroupでgoroutineを行わせる
+	func gorutine(s string, wg *sync.WaitGroup){
+		fmt.Println(s)
+
+		// 記述しないとエラー
+		wg.Done()
+	}
+
+	func normal(s string){
+		// 並列処理は間隔を開けないとスレッドの生成が間に合わない
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println(s)
+	}
+
+	func main(){
+		var wg sync.WaitGroup
+		// 並列処理が１個あることを示す
+		wg.Add(1)
+
+		go gorutine("world", &wg)
+		normal("hello")
+
+		wg.Wait()
+	}
+
+
+# channel 並列処理で値を渡す
+	func gorutine1 (s []int, c chan int){
+		sum := 0
+		for _, v := range s{
+			sum += v
+		}
+		c <- sum
+	}
+
+	func main() {
+		s:= []int {1, 2, 3, 4, 5}
+		c:= make(chan int)
+		go gorutine1(s, c)
+		
+		//ここで受信を待つ
+		x:= <-c
+		fmt.Println(x)
+	}
+
+
+# buffered channels
+
+	func main(){
+		// channelのバッファサイズを第２引数に指定する
+		ch := make(chan int, 2)
+		ch <- 100
+		ch <- 200
+
+		//3つめを入れるとエラーになるため
+		//１個取り出す
+		x := <-ch
+
+		// forで回すには一度クローズする必要がある
+		// channelの終了を教えてあげる
+		close(ch)
+
+		for c := range ch{
+			fmt.Println(c)
+		}
+	}
+
+# channelのrangeとclose
+	func gorutine1(s []int, c chan int){
+		sum := 0
+		for _, v := range s{
+			sum += var
+			c <- sum
+		}
+		close(c)
+	}
+	func main(){
+		s := []int{1, 2, 3, 4, 5}
+		c :=make(chan int, len(s))
+		go gorutine1(s, c)
+		for i := range c{
+			fmt.Println(i)
+		}
+	}
+
+# Producerとconsumer
+	func producer(ch chan int, i int){
+		ch <- i * 2
+	}
+
+	func consumer(ch chan int, wg *sync.WaitGroup){
+		for i := range ch {
+			fmt.Println("process", i * 1000)
+		
+			// n回目の処理が終わりましたの合図
+			wg.Done()
+		}
+	}
+
+	func main(){
+		var wg sync.WaitGroup
+		ch := make(chan int)
+
+		for i :=0; i < 10 ; i++ {
+			wg.Add(1)
+			go producer(ch, i)
+		}
+
+		go consumer(ch, &wg)
+		wg.Wait()
+
+		// すべての処理を終えたらcloseする
+		close(ch)
+	}
+
+
+# channelとselect
+	func gorutine1(ch chan string){
+		for {
+			ch <- "test1"
+			time.Sleep(3 * time.Second)
+		}
+	}
+
+	func gorutine2(ch chan int){
+		for {
+			ch <- 100
+			time.Sleep(1 * time.Second)
+		}
+	}
+
+	func main(){
+		c1 := make(chan string)
+		c2 := make(chan int)
+		go gorutine1(c1)
+		go gorutine2(c2)
+
+		// メッセージが入ってきた順に出力する。
+		for {
+			select {
+			case msg1 := <- c1:
+				fmt.Println(msg1)
+			case msg2 := <- c2:
+				fmt.Println(msg2)
+			}
+		}
+	}
+
+# for break
+case内でbreakを行いたい場合の処理方法
+
+	tick := time.Tick(100 * time.Millisecond)
+	boom := time.After(500 * time.Millisecond)
+
+	// 「OuterLoop」の名前は何でもいい
+	OuterLoop:  //hogehoge: でも可能
+		for {
+			select {
+			case <- tick:
+				fmt.Println("tick")
+			case <- boom:
+				fmt.Println("boom")
+				break OuterLoop
+			default:
+				fmt.Println("default")
+				time.Sleep(50 * time.Millisecond)
+			}
+			
+		}
+
+
+# sync.Mutex
+複数のgorutineで同じ値を書き換える場合、
+競合する可能性がある。
+その解決方法
+
+	type Counter struct{
+		v map[string]int
+		mux sync.Mutex
+	}
+
+	func (c *Counter) Inc(key string){
+		c.mux.Lock()
+		defer c.mux.Unlock()
+		c.v[key]++
+	}
+
+	func (c *Counter) Value(key string) int{
+		c.mux.Lock()
+		defer c.mux.Unlock()
+		return c.v[key]
+	}
+
+	func main(){
+		c:=Counter{v: make(map[string]int)}
+		go func(){
+			for i := 0; i < 10; i++{
+				c.Inc("key")
+			}
+		}()
+		go func(){
+			for i := 0; i < 10; i++{
+				c.Inc("key")
+			}
+		}()
+		time.Sleep(1 * time.Second)
+		fmt.Println(c, c.value("key"))
+	}
